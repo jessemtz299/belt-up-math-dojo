@@ -4,58 +4,340 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="theme-color" content="#12060a" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#14080c" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet" />
   <title>Belt Up: Math Dojo</title>
   <style>
-    :root { --bg:#12060a; --ink:#fff6ea; --muted:#c9a48c; --gold:#ffc14a; --red:#ff3b4a; --green:#3dff8a; --panel:rgba(28,10,16,.88); --stroke:rgba(255,193,74,.28); }
-    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:Trebuchet MS,Segoe UI,sans-serif; overflow:hidden; touch-action:manipulation; }
-    body { background:radial-gradient(1200px 600px at 50% -10%, #5a1420 0%, transparent 55%), #12060a; }
-    #app { height:100%; display:flex; flex-direction:column; }
-    header.top { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--stroke); background:#2a1018; }
-    .brand { font-weight:800; } .brand small { display:block; color:var(--muted); font-size:10px; letter-spacing:.12em; }
-    button { font:inherit; border:0; cursor:pointer; color:var(--ink); }
-    .btn { background:linear-gradient(#ff5a3a,#c2162a); border-radius:14px; padding:14px 18px; font-weight:800; box-shadow:0 6px 0 #6a0c18; text-transform:uppercase; }
-    .btn.gold { background:linear-gradient(#ffd56a,#e08a12); color:#2a1400; box-shadow:0 6px 0 #8a4a00; }
-    .btn.ghost { background:#2a141a; box-shadow:0 4px 0 #0006; border:1px solid var(--stroke); }
-    .btn.wide { width:100%; } .pill { background:#2a141a; border:1px solid var(--stroke); border-radius:999px; padding:8px 12px; font-size:13px; font-weight:700; }
-    main { flex:1; overflow:auto; padding:14px; } .screen { display:none; max-width:980px; margin:0 auto; } .screen.on { display:block; }
-    h1 { font-size:clamp(28px,5vw,42px); margin:0 0 8px; } p.lead { color:var(--muted); } .grid { display:grid; gap:12px; } .modes { grid-template-columns:1fr 1fr; }
-    .card { background:var(--panel); border:1px solid var(--stroke); border-radius:18px; padding:16px; }
-    .mode-card { min-height:110px; text-align:left; } .mode-card h3 { margin:0 0 4px; } .mode-card p { margin:0; color:var(--muted); font-size:13px; }
-    .kids { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-    .kid { background:#241016; border:2px solid transparent; border-radius:16px; padding:12px 8px; text-align:center; }
-    .kid.on { border-color:var(--gold); } .avatar { font-size:36px; }
-    .belts { display:flex; gap:8px; overflow:auto; } .belt { min-width:92px; border-radius:12px; padding:10px 8px; text-align:center; font-size:12px; font-weight:800; }
-    .belt.locked { opacity:.45; } .combo { height:10px; background:#2a1016; border-radius:99px; overflow:hidden; margin:8px 0 14px; }
-    .combo>i { display:block; height:100%; width:0; background:linear-gradient(90deg,#ff8a1a,#ff3b4a); }
-    .problem { font-size:clamp(42px,12vw,84px); font-weight:900; text-align:center; }
-    .answers { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .ans { min-height:78px; font-size:32px; font-weight:900; border-radius:18px; background:#2c151c; border:2px solid #ffc14a44; }
-    .ans.good { background:#145c32; } .ans.bad { background:#6a1220; }
-    .hud { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; } .stat { font-weight:800; font-size:14px; }
-    .fx { pointer-events:none; position:fixed; inset:0; display:grid; place-items:center; font-size:64px; font-weight:900; opacity:0; }
-    .fx.show { animation:bang .55s ease; } @keyframes bang { 30%{opacity:1} 100%{opacity:0} }
-    table.heat { width:100%; border-collapse:collapse; font-size:12px; } table.heat td,table.heat th { border:1px solid #0006; text-align:center; padding:6px 4px; }
-    .u{background:#3a2430} .s{background:#8a5a12} .m{background:#146a38}
-    input,select { width:100%; padding:14px; border-radius:12px; border:1px solid var(--stroke); background:#1a0c10; color:var(--ink); font:inherit; font-size:18px; }
-    .row{display:flex;gap:8px} .row>*{flex:1} .footer-note{color:var(--muted);font-size:12px;text-align:center}
-    @media(max-width:640px){ .modes{grid-template-columns:1fr} }
+    :root {
+      --bg: #14080c;
+      --ink: #fff6ea;
+      --muted: #e0b89a;
+      --gold: #ffc14a;
+      --gold2: #ff8a1a;
+      --red: #ff3a3a;
+      --green: #2ee36a;
+      --panel: rgba(18, 8, 10, 0.72);
+      --stroke: rgba(255, 193, 74, 0.35);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0; height: 100%; color: var(--ink);
+      font-family: Fredoka, "Trebuchet MS", sans-serif;
+      overflow: hidden; touch-action: manipulation;
+      background: #14080c;
+    }
+    body {
+      background-color: #14080c;
+      background-image:
+        linear-gradient(180deg, rgba(20,8,12,.35) 0%, rgba(12,4,8,.72) 55%, rgba(8,2,6,.88) 100%),
+        radial-gradient(900px 420px at 50% -8%, #8a1c28 0%, transparent 58%),
+        repeating-linear-gradient(90deg, #14070b 0 22px, #1b0a10 22px 44px);
+      background-size: cover, auto, auto;
+      background-position: center, center, center;
+    }
+    #app { height: 100%; display: flex; flex-direction: column; position: relative; }
+    header.top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+      background: linear-gradient(180deg, rgba(10,4,6,.78), rgba(10,4,6,.2));
+    }
+    .brand {
+      font-family: Bangers, Impact, sans-serif;
+      font-size: 28px; letter-spacing: .06em;
+      text-shadow: 0 3px 0 #000, 0 0 18px #ff3a3a88;
+      line-height: .9;
+    }
+    .brand small {
+      display: block; font-family: Fredoka, sans-serif;
+      font-size: 10px; letter-spacing: .18em; color: var(--gold); font-weight: 700;
+    }
+    .top-actions { display: flex; gap: 8px; }
+    button { font: inherit; border: 0; cursor: pointer; color: var(--ink); }
+    .pill {
+      background: rgba(20,8,12,.7); border: 2px solid var(--stroke);
+      border-radius: 999px; padding: 8px 12px; font-size: 14px; font-weight: 700;
+    }
+    .pill.lock { width: 44px; height: 44px; padding: 0; font-size: 18px; }
+    main { flex: 1; overflow: auto; padding: 8px 14px calc(18px + env(safe-area-inset-bottom)); }
+    .screen { display: none; max-width: 980px; margin: 0 auto; }
+    .screen.on { display: block; animation: pop .28s ease; }
+    @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+    .hero {
+      display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center;
+      background: var(--panel); border: 3px solid var(--gold);
+      border-radius: 28px; padding: 12px; margin-bottom: 14px;
+      box-shadow: 0 0 0 4px #ffc14a22, 0 16px 40px #0008;
+    }
+    .hero-art, #heroFace {
+      width: 150px; height: 170px; border-radius: 24px;
+      display: grid; place-items: center; font-size: 88px;
+      background: radial-gradient(circle at 40% 30%, #5a2430, #1a080c);
+      border: 3px solid var(--gold);
+    }
+    .hero h1 {
+      font-family: Bangers, Impact, sans-serif;
+      font-size: clamp(34px, 8vw, 56px); margin: 0 0 4px;
+      letter-spacing: .04em; text-shadow: 0 4px 0 #000;
+    }
+    .sash {
+      display: inline-block; padding: 6px 14px; border-radius: 999px;
+      font-weight: 800; color: #1a0a00; background: var(--gold);
+      box-shadow: 0 4px 0 #8a4a00; text-transform: uppercase;
+    }
+    .ready { color: var(--muted); margin: 8px 0 0; font-weight: 600; }
+    .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btn {
+      border-radius: 22px; padding: 18px 16px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .04em;
+      box-shadow: 0 8px 0 #4a0c10, 0 14px 24px #0008;
+    }
+    .btn:active { transform: translateY(5px); box-shadow: 0 2px 0 #4a0c10; }
+    .btn.train {
+      background: linear-gradient(#ff5a3a, #c2162a); min-height: 108px; text-align: left;
+    }
+    .btn.boss {
+      background: linear-gradient(#ffd56a, #e08a12); color: #2a1400;
+      box-shadow: 0 8px 0 #8a4a00, 0 14px 24px #0008; min-height: 108px; text-align: left;
+    }
+    .btn.ghost {
+      background: rgba(24,10,14,.78); border: 2px solid var(--stroke);
+      box-shadow: 0 5px 0 #0006; min-height: 72px; text-align: left;
+    }
+    .btn h3 {
+      font-family: Bangers, Impact, sans-serif; font-size: 30px; margin: 0;
+      letter-spacing: .05em; font-weight: 400;
+    }
+    .btn p { margin: 2px 0 0; font-size: 13px; opacity: .9; font-weight: 600; }
+    .side { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .belts { display: flex; gap: 8px; overflow: auto; padding: 4px 0 12px; }
+    .belt {
+      min-width: 86px; height: 54px; border-radius: 14px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; box-shadow: 0 4px 0 #0006 inset, 0 4px 0 #0004;
+      border: 2px solid #fff3;
+    }
+    .belt.locked { opacity: .42; filter: grayscale(.35); }
+    .week { display: flex; gap: 6px; margin: 4px 0 14px; }
+    .day {
+      flex: 1; height: 44px; border-radius: 12px; display: grid; place-items: center;
+      background: rgba(20,8,12,.7); border: 2px solid #ffc14a33; font-weight: 800;
+    }
+    .day.on { background: #146a38; border-color: #3dff8a; box-shadow: 0 0 12px #2ee36a55; }
+    .hud { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .stat {
+      font-family: Bangers, Impact, sans-serif; font-size: 22px; letter-spacing: .04em;
+      text-shadow: 0 2px 0 #000;
+    }
+    .combo-wrap { text-align: center; margin-bottom: 6px; }
+    #streakLine {
+      font-family: Bangers, Impact, sans-serif; font-size: 34px; letter-spacing: .08em;
+      color: var(--gold); text-shadow: 0 3px 0 #000, 0 0 16px #ffc14a88;
+    }
+    #streakLine.hot { animation: slam .28s ease; }
+    @keyframes slam {
+      0% { transform: scale(.6) rotate(-8deg); }
+      60% { transform: scale(1.2) rotate(4deg); }
+      100% { transform: scale(1); }
+    }
+    .combo {
+      height: 14px; background: #2a1016; border-radius: 99px; overflow: hidden;
+      border: 2px solid #ffc14a55; margin: 6px auto 10px; max-width: 280px;
+    }
+    .combo > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ff8a1a, #ff3b4a); transition: width .2s; }
+    .arena {
+      display: grid; grid-template-columns: 92px 1fr; gap: 8px; align-items: center;
+      margin-bottom: 8px;
+    }
+    #mascot, #mascotFace {
+      width: 92px; height: 110px; object-fit: contain;
+      display: grid; place-items: center; font-size: 58px;
+      filter: drop-shadow(0 6px 8px #000a);
+    }
+    #mascot.punch, #mascotFace.punch { animation: punch .28s ease; }
+    #mascot.wince, #mascotFace.wince { animation: wince .32s ease; }
+    #mascot.fire, #mascotFace.fire { filter: drop-shadow(0 0 14px #ff8a1a); }
+    @keyframes punch { 30% { transform: translateX(10px) rotate(-8deg) scale(1.08); } }
+    @keyframes wince { 25% { transform: translateX(-8px) rotate(6deg); } 50% { transform: translateX(6px); } }
+    .problem {
+      font-family: Bangers, Impact, sans-serif;
+      font-size: clamp(48px, 12vw, 92px); font-weight: 400; letter-spacing: .04em;
+      text-align: center; text-shadow: 0 5px 0 #000, 0 0 28px #ff3b4a66;
+      margin: 0;
+    }
+    .answers { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .ans {
+      min-height: 96px; font-size: 40px; font-weight: 800; border-radius: 22px;
+      background: linear-gradient(#fff1d6, #f0c98a); color: #2a1400;
+      border: 3px solid #ffc14a; box-shadow: 0 7px 0 #8a4a00, 0 10px 20px #0006;
+    }
+    .ans:active { transform: translateY(5px); box-shadow: 0 2px 0 #8a4a00; }
+    .ans.good { background: linear-gradient(#7dffb0, #146a38); color: #fff; border-color: #2ee36a; }
+    .ans.bad { background: linear-gradient(#ff8a90, #6a1220); color: #fff; border-color: #ff3a3a; }
+    .fx {
+      pointer-events: none; position: fixed; inset: 0; display: grid; place-items: center;
+      font-family: Bangers, Impact, sans-serif; font-size: 84px; letter-spacing: .06em;
+      opacity: 0; text-shadow: 0 6px 0 #000, 0 0 24px #ffc14a;
+    }
+    .fx.show { animation: bang .55s ease; }
+    @keyframes bang {
+      0% { opacity: 0; transform: scale(.5) rotate(-8deg); }
+      30% { opacity: 1; transform: scale(1.18) rotate(4deg); }
+      100% { opacity: 0; transform: scale(1.45); }
+    }
+    .shake { animation: shake .28s linear; }
+    @keyframes shake {
+      25% { transform: translateX(-8px); }
+      50% { transform: translateX(8px); }
+      75% { transform: translateX(-5px); }
+    }
+    .card {
+      background: var(--panel); border: 2px solid var(--stroke); border-radius: 22px;
+      padding: 16px; box-shadow: 0 12px 30px #0006;
+    }
+    #result.ceremony .sash-wrap {
+      height: 28px; border-radius: 20px; margin: 12px auto; max-width: 240px;
+      background: linear-gradient(90deg, #ffd56a, #e08a12); box-shadow: 0 0 24px #ffc14a;
+      animation: sash 1s ease;
+    }
+    @keyframes sash { from { transform: scaleX(.1); } to { transform: scaleX(1); } }
+    table.heat { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table.heat td, table.heat th { border: 1px solid #0006; text-align: center; padding: 6px 4px; }
+    .u { background: #3a2430; } .s { background: #8a5a12; } .m { background: #146a38; }
+    input, select {
+      width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--stroke);
+      background: #1a0c10; color: var(--ink); font: inherit; font-size: 18px;
+    }
+    .row { display: flex; gap: 8px; } .row > * { flex: 1; }
+    .kid {
+      background: rgba(20,8,12,.7); border: 3px solid transparent; border-radius: 18px;
+      padding: 12px 8px; text-align: center;
+    }
+    .kid.on { border-color: var(--gold); box-shadow: 0 0 0 3px #ffc14a33; }
+    .avatar { font-size: 42px; line-height: 1; }
+    h2 { font-family: Bangers, Impact, sans-serif; letter-spacing: .04em; font-weight: 400; font-size: 32px; margin: 0 0 8px; }
+    p.lead { color: var(--muted); margin: 0 0 14px; font-weight: 600; }
+    @media (max-width: 640px) {
+      .hero { grid-template-columns: 110px 1fr; }
+      .hero-art, #heroFace { width: 110px; height: 130px; font-size: 72px; }
+      .ans { min-height: 88px; font-size: 34px; }
+      .arena { grid-template-columns: 72px 1fr; }
+      #mascot, #mascotFace { width: 72px; height: 88px; font-size: 48px; }
+    }
   </style>
 </head>
 <body>
   <div id="app">
-    <header class="top"><div class="brand">BELT UP<small>MATH DOJO</small></div><div><button class="pill" id="kidChip" onclick="show('home')">Fighter</button> <button class="pill" onclick="showParentGate()">Parents</button></div></header>
+    <header class="top">
+      <div class="brand">BELT UP<small>MATH DOJO</small></div>
+      <div class="top-actions">
+        <button class="pill" id="kidChip" onclick="show('home')">🐯 Andres</button>
+        <button class="pill lock" onclick="showParentGate()" aria-label="Parents">🔒</button>
+      </div>
+    </header>
     <main>
-      <section id="home" class="screen on"><h1>Enter the dojo.</h1><p class="lead">Ten minutes. Combos. Belts.</p><div class="card" style="margin-bottom:12px"><b>Your fighter</b><div class="kids" id="kidList"></div></div><div class="belts" id="beltStrip"></div><div class="card" style="margin-top:12px"><b>This week</b><div id="calStrip" style="display:flex;gap:6px;margin-top:10px"></div></div><div class="grid modes" style="margin-top:14px"><button class="btn mode-card" onclick="startTrain()"><h3>Daily Training</h3><p>10-minute adaptive drills.</p></button><button class="btn gold mode-card" onclick="startBoss()"><h3>Boss Test</h3><p>Earn the next belt.</p></button><button class="btn ghost mode-card" onclick="show('sparSetup')"><h3>Sparring</h3><p>Pass-and-play.</p></button><button class="btn ghost mode-card" onclick="showParentGate()"><h3>Parent Dojo</h3><p>Heatmap + report.</p></button><button class="btn ghost mode-card" onclick="show('drops')"><h3>Dojo Drops</h3><p>New grounds.</p></button></div></section>
-      <section id="editKids" class="screen"><h2>Edit fighter</h2><div id="editFields"></div><button class="btn wide" onclick="saveKids()">Save</button></section>
-      <section id="play" class="screen"><div class="hud"><div class="stat" id="playTitle">Training</div><div class="stat" id="playMeta">0:00</div><button class="pill" onclick="endPlay(false)">Exit</button></div><div class="combo"><i id="comboBar"></i></div><div style="text-align:center"><div id="streakLine" class="stat">COMBO x0</div><div class="problem" id="problem">3 × 4</div></div><div class="answers" id="answers"></div></section>
-      <section id="result" class="screen"><div class="card" style="text-align:center"><div style="font-size:52px" id="resultEmoji">🔥</div><h2 id="resultTitle">Done</h2><p class="lead" id="resultBody"></p><button class="btn wide" onclick="show('home')">Back</button></div></section>
-      <section id="sparSetup" class="screen"><h2>Sparring</h2><div class="card grid"><select id="p1"></select><select id="p2"></select><select id="sparBelt"><option value="yellow" selected>Yellow</option><option value="orange">Orange</option><option value="green">Green</option><option value="blue">Blue</option></select><button class="btn wide" onclick="startSpar()">Fight</button></div></section>
-      <section id="parentGate" class="screen"><h2>Parent gate</h2><p class="lead">PIN default 1234</p><input id="pinIn" inputmode="numeric" maxlength="6" /><button class="btn wide" onclick="unlockParent()">Open</button></section>
-      <section id="parent" class="screen"><h2>Parent dashboard</h2><select id="parentKid" onchange="renderParent()"></select><div id="weekStats"></div><div id="heatWrap"></div><p id="reportPreview"></p><button class="btn" onclick="copyReport()">Copy report</button> <button class="btn gold" onclick="mailReport()">Email</button><select id="forceBelt" onchange="forceBelt(this.value)"></select><button class="btn ghost wide" onclick="show('home')">Back</button></section>
-      <section id="drops" class="screen"><h2>Dojo Drops</h2><div id="dropList"></div><button class="btn ghost wide" onclick="show('home')">Back</button></section>
-      <section id="onboard" class="screen"><h1>Name your fighter</h1><input id="onName" /><div id="onAvatars" class="row"></div><button class="btn wide" onclick="finishOnboard()">Enter</button></section>
+      <section id="onboard" class="screen">
+        <h2>Name your fighter.</h2>
+        <p class="lead">Tiger is the default gi. Dragon and Wolf are in the locker.</p>
+        <div class="card">
+          <input id="onName" placeholder="Fighter name" maxlength="18" />
+          <div class="row" id="onAvatars" style="margin-top:12px"></div>
+          <button class="btn train" style="margin-top:12px;min-height:64px;width:100%" onclick="finishOnboard()">Step on the mat</button>
+        </div>
+      </section>
+      <section id="home" class="screen">
+        <div class="hero" onclick="show('editKids')">
+          <div class="hero-art" id="heroFace">🐯</div>
+          <div>
+            <h1 id="heroName">ANDRES IS READY.</h1>
+            <span class="sash" id="heroSash">Yellow belt</span>
+            <p class="ready">10 minutes. Earn the next belt.</p>
+          </div>
+        </div>
+        <div class="belts" id="beltStrip"></div>
+        <div class="week" id="calStrip"></div>
+        <div class="modes">
+          <button class="btn train" onclick="startTrain()"><h3>TRAIN</h3><p>Daily combo drills</p></button>
+          <button class="btn boss" onclick="startBoss()"><h3>BOSS FIGHT</h3><p>Win the next belt</p></button>
+        </div>
+        <div class="side">
+          <button class="btn ghost" onclick="show('sparSetup')"><h3>SPAR</h3><p>Vs parent</p></button>
+          <button class="btn ghost" onclick="show('drops')"><h3>DROPS</h3><p>New grounds</p></button>
+        </div>
+      </section>
+      <section id="editKids" class="screen">
+        <h2>Edit fighter</h2>
+        <div id="editFields"></div>
+        <button class="btn train" style="width:100%;min-height:64px;margin-top:12px" onclick="saveKids()">Save</button>
+      </section>
+      <section id="play" class="screen">
+        <div class="hud">
+          <div class="stat" id="playTitle">TRAIN</div>
+          <div class="stat" id="playMeta">0:00</div>
+          <button class="pill lock" onclick="endPlay(false)">X</button>
+        </div>
+        <div class="combo-wrap">
+          <div id="streakLine">COMBO x0</div>
+          <div class="combo"><i id="comboBar"></i></div>
+        </div>
+        <div class="arena">
+          <div id="mascotFace">🐯</div>
+          <img id="mascot" alt="" style="display:none" />
+          <div class="problem" id="problem">3 × 4</div>
+        </div>
+        <div class="answers" id="answers"></div>
+      </section>
+      <section id="result" class="screen">
+        <div class="card" style="text-align:center">
+          <div style="font-size:64px" id="resultEmoji">FIRE</div>
+          <h2 id="resultTitle">Session complete</h2>
+          <div class="sash-wrap" id="sashWrap" style="display:none"></div>
+          <p class="lead" id="resultBody"></p>
+          <button class="btn train" style="width:100%;min-height:64px" onclick="show('home')">Back to the mat</button>
+        </div>
+      </section>
+      <section id="sparSetup" class="screen">
+        <h2>Sparring ring</h2>
+        <p class="lead">Same tablet. 8 punches each.</p>
+        <div class="card">
+          <select id="p1"></select>
+          <select id="p2"></select>
+          <select id="sparBelt">
+            <option value="white">White</option>
+            <option value="yellow" selected>Yellow</option>
+            <option value="orange">Orange</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+          </select>
+          <button class="btn train" style="width:100%;min-height:64px;margin-top:12px" onclick="startSpar()">Fight</button>
+        </div>
+      </section>
+      <section id="parentGate" class="screen">
+        <h2>Parent gate</h2>
+        <p class="lead">PIN default is 1234.</p>
+        <input id="pinIn" inputmode="numeric" maxlength="6" placeholder="PIN" />
+        <button class="btn train" style="width:100%;min-height:64px;margin-top:12px" onclick="unlockParent()">Open dashboard</button>
+      </section>
+      <section id="parent" class="screen">
+        <h2>Parent dashboard</h2>
+        <select id="parentKid" onchange="renderParent()"></select>
+        <div id="weekStats"></div>
+        <div id="heatWrap" style="overflow:auto"></div>
+        <p id="reportPreview"></p>
+        <button class="btn ghost" onclick="copyReport()">Copy</button>
+        <button class="btn boss" onclick="mailReport()">Email</button>
+        <select id="forceBelt" onchange="forceBelt(this.value)"></select>
+        <button class="btn ghost" style="width:100%;margin-top:12px" onclick="show('home')">Back</button>
+      </section>
+      <section id="drops" class="screen">
+        <h2>Dojo Drops</h2>
+        <div id="dropList"></div>
+        <button class="btn ghost" style="width:100%;margin-top:12px" onclick="show('home')">Back</button>
+      </section>
     </main>
   </div>
   <div class="fx" id="fx"></div>
