@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#12060a" />
+  <title>Belt Up: Math Dojo</title>
+  <style>
+    :root { --bg:#12060a; --ink:#fff6ea; --muted:#c9a48c; --gold:#ffc14a; --red:#ff3b4a; --green:#3dff8a; --panel:rgba(28,10,16,.88); --stroke:rgba(255,193,74,.28); }
+    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:Trebuchet MS,Segoe UI,sans-serif; overflow:hidden; touch-action:manipulation; }
+    body { background:radial-gradient(1200px 600px at 50% -10%, #5a1420 0%, transparent 55%), #12060a; }
+    #app { height:100%; display:flex; flex-direction:column; }
+    header.top { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--stroke); background:#2a1018; }
+    .brand { font-weight:800; } .brand small { display:block; color:var(--muted); font-size:10px; letter-spacing:.12em; }
+    button { font:inherit; border:0; cursor:pointer; color:var(--ink); }
+    .btn { background:linear-gradient(#ff5a3a,#c2162a); border-radius:14px; padding:14px 18px; font-weight:800; box-shadow:0 6px 0 #6a0c18; text-transform:uppercase; }
+    .btn.gold { background:linear-gradient(#ffd56a,#e08a12); color:#2a1400; box-shadow:0 6px 0 #8a4a00; }
+    .btn.ghost { background:#2a141a; box-shadow:0 4px 0 #0006; border:1px solid var(--stroke); }
+    .btn.wide { width:100%; } .pill { background:#2a141a; border:1px solid var(--stroke); border-radius:999px; padding:8px 12px; font-size:13px; font-weight:700; }
+    main { flex:1; overflow:auto; padding:14px; } .screen { display:none; max-width:980px; margin:0 auto; } .screen.on { display:block; }
+    h1 { font-size:clamp(28px,5vw,42px); margin:0 0 8px; } p.lead { color:var(--muted); } .grid { display:grid; gap:12px; } .modes { grid-template-columns:1fr 1fr; }
+    .card { background:var(--panel); border:1px solid var(--stroke); border-radius:18px; padding:16px; }
+    .mode-card { min-height:110px; text-align:left; } .mode-card h3 { margin:0 0 4px; } .mode-card p { margin:0; color:var(--muted); font-size:13px; }
+    .kids { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .kid { background:#241016; border:2px solid transparent; border-radius:16px; padding:12px 8px; text-align:center; }
+    .kid.on { border-color:var(--gold); } .avatar { font-size:36px; }
+    .belts { display:flex; gap:8px; overflow:auto; } .belt { min-width:92px; border-radius:12px; padding:10px 8px; text-align:center; font-size:12px; font-weight:800; }
+    .belt.locked { opacity:.45; } .combo { height:10px; background:#2a1016; border-radius:99px; overflow:hidden; margin:8px 0 14px; }
+    .combo>i { display:block; height:100%; width:0; background:linear-gradient(90deg,#ff8a1a,#ff3b4a); }
+    .problem { font-size:clamp(42px,12vw,84px); font-weight:900; text-align:center; }
+    .answers { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .ans { min-height:78px; font-size:32px; font-weight:900; border-radius:18px; background:#2c151c; border:2px solid #ffc14a44; }
+    .ans.good { background:#145c32; } .ans.bad { background:#6a1220; }
+    .hud { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; } .stat { font-weight:800; font-size:14px; }
+    .fx { pointer-events:none; position:fixed; inset:0; display:grid; place-items:center; font-size:64px; font-weight:900; opacity:0; }
+    .fx.show { animation:bang .55s ease; } @keyframes bang { 30%{opacity:1} 100%{opacity:0} }
+    table.heat { width:100%; border-collapse:collapse; font-size:12px; } table.heat td,table.heat th { border:1px solid #0006; text-align:center; padding:6px 4px; }
+    .u{background:#3a2430} .s{background:#8a5a12} .m{background:#146a38}
+    input,select { width:100%; padding:14px; border-radius:12px; border:1px solid var(--stroke); background:#1a0c10; color:var(--ink); font:inherit; font-size:18px; }
+    .row{display:flex;gap:8px} .row>*{flex:1} .footer-note{color:var(--muted);font-size:12px;text-align:center}
+    @media(max-width:640px){ .modes{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="top"><div class="brand">BELT UP<small>MATH DOJO</small></div><div><button class="pill" id="kidChip" onclick="show('home')">Fighter</button> <button class="pill" onclick="showParentGate()">Parents</button></div></header>
+    <main>
+      <section id="home" class="screen on"><h1>Enter the dojo.</h1><p class="lead">Ten minutes. Combos. Belts.</p><div class="card" style="margin-bottom:12px"><b>Your fighter</b><div class="kids" id="kidList"></div></div><div class="belts" id="beltStrip"></div><div class="card" style="margin-top:12px"><b>This week</b><div id="calStrip" style="display:flex;gap:6px;margin-top:10px"></div></div><div class="grid modes" style="margin-top:14px"><button class="btn mode-card" onclick="startTrain()"><h3>Daily Training</h3><p>10-minute adaptive drills.</p></button><button class="btn gold mode-card" onclick="startBoss()"><h3>Boss Test</h3><p>Earn the next belt.</p></button><button class="btn ghost mode-card" onclick="show('sparSetup')"><h3>Sparring</h3><p>Pass-and-play.</p></button><button class="btn ghost mode-card" onclick="showParentGate()"><h3>Parent Dojo</h3><p>Heatmap + report.</p></button><button class="btn ghost mode-card" onclick="show('drops')"><h3>Dojo Drops</h3><p>New grounds.</p></button></div></section>
+      <section id="editKids" class="screen"><h2>Edit fighter</h2><div id="editFields"></div><button class="btn wide" onclick="saveKids()">Save</button></section>
+      <section id="play" class="screen"><div class="hud"><div class="stat" id="playTitle">Training</div><div class="stat" id="playMeta">0:00</div><button class="pill" onclick="endPlay(false)">Exit</button></div><div class="combo"><i id="comboBar"></i></div><div style="text-align:center"><div id="streakLine" class="stat">COMBO x0</div><div class="problem" id="problem">3 × 4</div></div><div class="answers" id="answers"></div></section>
+      <section id="result" class="screen"><div class="card" style="text-align:center"><div style="font-size:52px" id="resultEmoji">🔥</div><h2 id="resultTitle">Done</h2><p class="lead" id="resultBody"></p><button class="btn wide" onclick="show('home')">Back</button></div></section>
+      <section id="sparSetup" class="screen"><h2>Sparring</h2><div class="card grid"><select id="p1"></select><select id="p2"></select><select id="sparBelt"><option value="yellow" selected>Yellow</option><option value="orange">Orange</option><option value="green">Green</option><option value="blue">Blue</option></select><button class="btn wide" onclick="startSpar()">Fight</button></div></section>
+      <section id="parentGate" class="screen"><h2>Parent gate</h2><p class="lead">PIN default 1234</p><input id="pinIn" inputmode="numeric" maxlength="6" /><button class="btn wide" onclick="unlockParent()">Open</button></section>
+      <section id="parent" class="screen"><h2>Parent dashboard</h2><select id="parentKid" onchange="renderParent()"></select><div id="weekStats"></div><div id="heatWrap"></div><p id="reportPreview"></p><button class="btn" onclick="copyReport()">Copy report</button> <button class="btn gold" onclick="mailReport()">Email</button><select id="forceBelt" onchange="forceBelt(this.value)"></select><button class="btn ghost wide" onclick="show('home')">Back</button></section>
+      <section id="drops" class="screen"><h2>Dojo Drops</h2><div id="dropList"></div><button class="btn ghost wide" onclick="show('home')">Back</button></section>
+      <section id="onboard" class="screen"><h1>Name your fighter</h1><input id="onName" /><div id="onAvatars" class="row"></div><button class="btn wide" onclick="finishOnboard()">Enter</button></section>
+    </main>
+  </div>
+  <div class="fx" id="fx"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
